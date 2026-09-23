@@ -29,7 +29,7 @@ PatchParseOptions:
 - max_patches
 - max_line_bytes
 
-ApplyResult contains the resulting text and one boolean per input patch.
+ApplyResult contains the resulting text and one boolean for each input patch.
 
 ## Compatibility adapter
 

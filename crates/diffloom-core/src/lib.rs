@@ -454,6 +454,7 @@ pub struct MatchOptions {
     pub threshold: f64,
     pub distance: usize,
     pub max_work: u64,
+    pub max_input_units: usize,
 }
 
 impl Default for MatchOptions {
@@ -462,6 +463,7 @@ impl Default for MatchOptions {
             threshold: DEFAULT_MATCH_THRESHOLD,
             distance: DEFAULT_MATCH_DISTANCE,
             max_work: DEFAULT_MAX_WORK,
+            max_input_units: DEFAULT_MAX_INPUT_UNITS,
         }
     }
 }
@@ -472,6 +474,12 @@ pub fn match_main(
     location: usize,
     options: MatchOptions,
 ) -> Option<usize> {
+    if text.chars().count() > options.max_input_units
+        || pattern.chars().count() > options.max_input_units
+    {
+        return None;
+    }
+
     let text_units: Vec<char> = text.chars().collect();
     let pattern_units: Vec<char> = pattern.chars().collect();
 
@@ -1016,7 +1024,7 @@ pub fn patch_apply(
     }
     let mut current = text.to_owned();
     let mut applied = Vec::with_capacity(patches.len());
-    let mut delta: isize = 0;
+    let mut delta: i128 = 0;
 
     for patch in patches {
         let old_text: String = patch
@@ -1032,8 +1040,9 @@ pub fn patch_apply(
             .map(|diff| diff.text.as_str())
             .collect();
 
-        let expected = (patch.old_start as isize + delta).max(0) as usize;
-        let expected = expected.min(current.chars().count());
+        let expected = ((patch.old_start as i128) + delta)
+            .max(0)
+            .min(current.chars().count() as i128) as usize;
         let found = if old_text.is_empty() {
             Some(expected)
         } else {
@@ -1049,7 +1058,7 @@ pub fn patch_apply(
                     .min(chars.len());
                 chars.splice(start..end, new_text.chars());
                 current = chars.into_iter().collect();
-                delta += patch.new_len as isize - patch.old_len as isize;
+                delta += patch.new_len as i128 - patch.old_len as i128;
                 applied.push(true);
             }
             None => applied.push(false),
@@ -1185,6 +1194,27 @@ mod tests {
         };
         assert!(matches!(
             patch_from_text_with_options("@@ -0 +1 @@\n+a\n", options),
+            Err(PatchParseError::LimitExceeded)
+        ));
+    }
+
+    #[test]
+    fn match_input_limit_is_safe() {
+        let options = MatchOptions {
+            max_input_units: 2,
+            ..MatchOptions::default()
+        };
+        assert_eq!(match_main("abc", "a", 0, options), None);
+    }
+
+    #[test]
+    fn parser_line_limit_is_safe() {
+        let options = PatchParseOptions {
+            max_line_bytes: 2,
+            ..PatchParseOptions::default()
+        };
+        assert!(matches!(
+            patch_from_text_with_options("@@ -1 +1 @@\n+a\n", options),
             Err(PatchParseError::LimitExceeded)
         ));
     }
