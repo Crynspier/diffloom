@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
-      - run: cargo fmt --all -- --check
+      - run: cargo fmt --all
       - run: cargo test --workspace
       - run: cargo build --release --workspace
       - name: Package

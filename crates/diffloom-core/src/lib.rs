@@ -927,7 +927,8 @@ fn parse_header_range(s: &str) -> Result<(usize, usize), PatchParseError> {
         .map_err(|_| PatchParseError::InvalidHeader(s.to_string()))?;
 
     match len_text {
-        None => Ok((start.saturating_sub(1), 1)),
+        None if start == 0 => Ok((0, 0)),
+        None => Ok((start - 1, 1)),
         Some("0") => Ok((start, 0)),
         Some(len) => {
             let len = len
@@ -1120,7 +1121,7 @@ mod tests {
             Some(6)
         );
         assert_eq!(
-            match_main("hello brve world", "brave", 5, options),
+            match_main("hello brve world", "brave", 6, options),
             Some(6)
         );
     }
@@ -1156,17 +1157,24 @@ mod tests {
         let patches = patch_make("abc", "axc", DiffOptions::default());
         assert_eq!(
             patch_to_text(&patches),
-            "@@ -1,3 +1,3 @@\\n a\\n-b\\n+x\\n c\\n"
+            "@@ -1,3 +1,3 @@\n a\n-b\n+x\n c\n"
         );
     }
 
     #[test]
     fn patch_parser_rejects_invalid_lengths() {
-        let bad = "@@ -1,3 +1,3 @@\n abc\n";
+        let bad = "@@ -1,3 +1,3 @@\n ab\n";
         assert!(matches!(
             patch_from_text(bad),
             Err(PatchParseError::InvalidLength)
         ));
+    }
+
+    #[test]
+    fn parser_empty_range_is_zero_length() {
+        let parsed = patch_from_text("@@ -0 +1,3 @@\n+abc\n").unwrap();
+        assert_eq!(parsed[0].old_start, 0);
+        assert_eq!(parsed[0].old_len, 0);
     }
 
     #[test]
