@@ -117,7 +117,7 @@ pub unsafe extern "C" fn diffloom_patch_apply(
 
 /// Returns the stable C ABI version.
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn diffloom_abi_version() -> c_int {
+pub extern "C" fn diffloom_abi_version() -> c_int {
     1
 }
 
@@ -127,7 +127,7 @@ mod tests {
 
     #[test]
     fn abi_version_is_stable() {
-        assert_eq!(unsafe { diffloom_abi_version() }, 1);
+        assert_eq!(diffloom_abi_version(), 1);
     }
 
     #[test]
