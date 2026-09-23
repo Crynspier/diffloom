@@ -403,7 +403,7 @@ fn merge_diffs(diffs: &mut Vec<Diff>) {
     *diffs = merged;
 }
 
-fn semantic_cleanup(diffs: &mut Vec<Diff>) {
+fn semantic_cleanup(diffs: &mut [Diff]) {
     if diffs.len() < 3 {
         return;
     }
