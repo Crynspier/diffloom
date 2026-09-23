@@ -1,0 +1,18 @@
+[workspace]
+resolver = "2"
+members = ["crates/diffloom-core"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+rust-version = "1.82"
+repository = "https://github.com/Crynspier/diffloom"
+description = "A modern, compatibility-first diff engine."
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+all = "warn"
+pedantic = "warn"
