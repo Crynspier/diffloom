@@ -1,6 +1,10 @@
 [workspace]
 resolver = "2"
-members = ["crates/diffloom-core"]
+members = [
+    "crates/diffloom-core",
+    "crates/diffloom-cli",
+    "crates/diffloom-ffi",
+]
 
 [workspace.package]
 version = "0.1.0"
@@ -8,11 +12,10 @@ edition = "2021"
 license = "MIT"
 rust-version = "1.82"
 repository = "https://github.com/Crynspier/diffloom"
-description = "A modern, compatibility-first diff engine."
+description = "A modern, compatibility-first diff, match, and patch engine."
 
 [workspace.lints.rust]
-unsafe_code = "forbid"
+unsafe_code = "warn"
 
 [workspace.lints.clippy]
 all = "warn"
-pedantic = "warn"

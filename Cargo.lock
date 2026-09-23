@@ -1,0 +1,19 @@
+version = 4
+
+[[package]]
+name = "diffloom"
+version = "0.1.0"
+dependencies = [
+ "diffloom-core",
+]
+
+[[package]]
+name = "diffloom-core"
+version = "0.1.0"
+
+[[package]]
+name = "diffloom-ffi"
+version = "0.1.0"
+dependencies = [
+ "diffloom-core",
+]

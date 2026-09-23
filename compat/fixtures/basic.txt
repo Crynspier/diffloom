@@ -1,0 +1,4 @@
+fixture=basic-replacement
+old=Hello world
+new=Hello Diffloom
+expected_invariant=apply(diff(old,new),old)==new

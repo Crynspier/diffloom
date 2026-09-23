@@ -1,0 +1,3 @@
+fixture=patch-format
+expected_grammar=@@ -old-start,old-length +new-start,new-length @@
+payload=percent-encoded-utf8

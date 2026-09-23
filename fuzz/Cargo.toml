@@ -1,0 +1,33 @@
+[package]
+name = "diffloom-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+diffloom-core = { path = "../crates/diffloom-core" }
+libfuzzer-sys = "0.4"
+
+[[bin]]
+name = "diff"
+path = "fuzz_targets/diff.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "patch_parse"
+path = "fuzz_targets/patch_parse.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "patch_apply"
+path = "fuzz_targets/patch_apply.rs"
+test = false
+doc = false
+bench = false
